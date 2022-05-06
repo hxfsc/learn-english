@@ -1,9 +1,15 @@
 import React from "react"
-import { View, Text, Button } from "react-native"
+import { View, Text, Button, StyleSheet } from "react-native"
 
 export default function ({ navigation }) {
+  const styles = StyleSheet.create({
+    container: {
+      backgroundColor: "#330022"
+    }
+  })
+
   return (
-    <View>
+    <View style={styles.container}>
       <Text>Basic Screen</Text>
       <Button title="Middle" onPress={() => navigation.navigate("MiddleScreen")} />
     </View>

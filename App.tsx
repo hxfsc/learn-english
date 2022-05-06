@@ -5,6 +5,7 @@ import { SafeAreaView, Text, View, Button, StyleSheet, useWindowDimensions, Touc
 import { NavigationContainer } from "@react-navigation/native"
 import { createNativeStackNavigator } from "@react-navigation/native-stack"
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs"
+import Icons from "react-native-vector-icons/MaterialIcons"
 
 import BasicScreen from "./src/basic/BasicScreen"
 import MiddleScreen from "./src/basic/MiddleScreen"
@@ -78,14 +79,27 @@ const tabbar = {
   UserScreen: "个人"
 }
 
+const tabbarIcon = {
+  HomeScreen: ({ color }) => <Icons name="menu-book" size={30} color={color} />,
+  UserScreen: ({ color }) => <Icons name="person" size={30} color={color} />
+}
+
 const App = () => {
   return (
     <NavigationContainer>
       <Tab.Navigator
         initialRouteName="HomeScreen"
         screenOptions={({ route }) => ({
-          tabBarIcon: () => null,
-          tabBarLabel: tabbar[route.name]
+          headerShown: false,
+          title: tabbar[route.name],
+          tabBarShowLabel: true,
+          tabBarIcon: ({ color }) => {
+            return tabbarIcon[route.name]({ color })
+          },
+          tabBarStyle: {
+            borderTopWidth: 0,
+            elevation: 0
+          }
         })}
       >
         <Tab.Screen name="HomeScreen" component={HomeScreen} options={{ headerShown: false }} />
