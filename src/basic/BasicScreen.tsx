@@ -1,16 +1,25 @@
-import React from "react"
-import { View, Text, Button, StyleSheet } from "react-native"
+import { useFocusEffect } from "@react-navigation/native"
+import React, { useCallback, useContext, useEffect } from "react"
+import { View, Text, Button } from "react-native"
 
-export default function ({ navigation }) {
-  const styles = StyleSheet.create({
-    container: {
-      backgroundColor: "#330022"
-    }
-  })
+import { ThemeContext, themeContextProps } from "../../context/theme"
+
+export default function (props: any) {
+  const { navigation } = props
+  const { color, toggleColor } = useContext<themeContextProps>(ThemeContext)
+
+  useFocusEffect(
+    useCallback(() => {
+      toggleColor("#23527c")
+    }, [navigation])
+  )
 
   return (
-    <View style={styles.container}>
+    <View>
       <Text>Basic Screen</Text>
+      <View>
+        <Text>{color}</Text>
+      </View>
       <Button title="Middle" onPress={() => navigation.navigate("MiddleScreen")} />
     </View>
   )

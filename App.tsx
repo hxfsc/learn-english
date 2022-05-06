@@ -1,6 +1,6 @@
-import React from "react"
+import React, { useState } from "react"
 
-import { SafeAreaView, Text, View, Button, StyleSheet, useWindowDimensions, TouchableOpacity } from "react-native"
+import { SafeAreaView, Text, View, StyleSheet, TouchableOpacity, StatusBar } from "react-native"
 
 import { NavigationContainer } from "@react-navigation/native"
 import { createNativeStackNavigator } from "@react-navigation/native-stack"
@@ -10,6 +10,8 @@ import Icons from "react-native-vector-icons/MaterialIcons"
 import BasicScreen from "./src/basic/BasicScreen"
 import MiddleScreen from "./src/basic/MiddleScreen"
 import SeniorScreen from "./src/basic/SeniorScreen"
+
+import { ThemeContext } from "./context/theme"
 
 const Stack = createNativeStackNavigator()
 const Tab = createBottomTabNavigator()
@@ -38,9 +40,9 @@ function HomeScreen({ navigation }) {
     <View style={styles.wrapper}>
       <View style={styles.container}>
         <Stack.Navigator initialRouteName="BasicScreen">
-          <Stack.Screen name="BasicScreen" component={BasicScreen} />
-          <Stack.Screen name="MiddleScreen" component={MiddleScreen} />
-          <Stack.Screen name="SeniorScreen" component={SeniorScreen} />
+          <Stack.Screen name="BasicScreen" component={BasicScreen} options={{ headerShown: false }} />
+          <Stack.Screen name="MiddleScreen" component={MiddleScreen} options={{ headerShown: false }} />
+          <Stack.Screen name="SeniorScreen" component={SeniorScreen} options={{ headerShown: false }} />
         </Stack.Navigator>
       </View>
       <View style={styles.footer}>
@@ -50,13 +52,21 @@ function HomeScreen({ navigation }) {
           </View>
         </TouchableOpacity>
 
-        <TouchableOpacity onPress={() => navigation.navigate("MiddleScreen")}>
+        <TouchableOpacity
+          onPress={() => {
+            navigation.navigate("MiddleScreen")
+          }}
+        >
           <View>
             <Text>Middle</Text>
           </View>
         </TouchableOpacity>
 
-        <TouchableOpacity onPress={() => navigation.navigate("SeniorScreen")}>
+        <TouchableOpacity
+          onPress={() => {
+            navigation.navigate("SeniorScreen")
+          }}
+        >
           <View>
             <Text>Senior</Text>
           </View>
@@ -68,44 +78,69 @@ function HomeScreen({ navigation }) {
 
 function UserScreen() {
   return (
-    <View>
+    <View style={{ flex: 1, display: "flex", justifyContent: "center", alignContent: "center" }}>
       <Text>User Screen</Text>
+    </View>
+  )
+}
+
+function FavScreen() {
+  return (
+    <View style={{ flex: 1, display: "flex", justifyContent: "center", alignContent: "center" }}>
+      <Text>Fav Screen</Text>
     </View>
   )
 }
 
 const tabbar = {
   HomeScreen: "主页",
+  FavScreen: "收藏",
   UserScreen: "个人"
 }
 
 const tabbarIcon = {
   HomeScreen: ({ color }) => <Icons name="menu-book" size={30} color={color} />,
+  FavScreen: ({ color }) => <Icons name="favorite" size={30} color={color} />,
   UserScreen: ({ color }) => <Icons name="person" size={30} color={color} />
 }
 
 const App = () => {
+  const [bgColor, toggleThemeColor] = useState<string>("#23527c")
+
+  const toggleColor = (color: string) => {
+    toggleThemeColor(color)
+  }
+
   return (
-    <NavigationContainer>
-      <Tab.Navigator
-        initialRouteName="HomeScreen"
-        screenOptions={({ route }) => ({
-          headerShown: false,
-          title: tabbar[route.name],
-          tabBarShowLabel: true,
-          tabBarIcon: ({ color }) => {
-            return tabbarIcon[route.name]({ color })
-          },
-          tabBarStyle: {
-            borderTopWidth: 0,
-            elevation: 0
-          }
-        })}
-      >
-        <Tab.Screen name="HomeScreen" component={HomeScreen} options={{ headerShown: false }} />
-        <Tab.Screen name="UserScreen" component={UserScreen} />
-      </Tab.Navigator>
-    </NavigationContainer>
+    <ThemeContext.Provider value={{ color: bgColor, toggleColor }}>
+      <SafeAreaView style={{ flex: 1, backgroundColor: bgColor }}>
+        <StatusBar barStyle={"light-content"} />
+
+        <NavigationContainer>
+          <Text>{bgColor}</Text>
+          <Tab.Navigator
+            initialRouteName="HomeScreen"
+            screenOptions={({ route }) => ({
+              headerShown: false,
+              title: tabbar[route.name],
+              tabBarShowLabel: true,
+              tabBarIcon: ({ color }) => {
+                return tabbarIcon[route.name]({ color })
+              },
+              tabBarStyle: {
+                borderTopWidth: 0,
+                elevation: 0,
+                backgroundColor: bgColor
+              }
+            })}
+          >
+            <Tab.Screen name="HomeScreen" component={HomeScreen} />
+            <Tab.Screen name="FavScreen" component={FavScreen} />
+            <Tab.Screen name="UserScreen" component={UserScreen} />
+          </Tab.Navigator>
+        </NavigationContainer>
+      </SafeAreaView>
+    </ThemeContext.Provider>
   )
 }
 
